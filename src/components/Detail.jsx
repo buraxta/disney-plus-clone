@@ -61,6 +61,7 @@ const Background = styled.div`
 `;
 
 const ImageTitle = styled.div`
+margin-top: 60px;
   height: 30vh;
   width: 35vw;
   min-height: 170px;

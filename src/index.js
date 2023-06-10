@@ -5,12 +5,14 @@ import { store } from './app/store';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
+import Home from './components/Home';
+import Detail from './components/Detail';
+import Login from './components/Login';
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Home from './components/Home';
-import Detail from './components/Detail';
+
 
 
 const router = createBrowserRouter([
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/detail",
         element: <Detail/>
+      },
+      {
+        path: "/login",
+        element: <Login/>
       }
     ]
   },
