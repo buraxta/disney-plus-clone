@@ -5,21 +5,26 @@ import Viewers from './Viewers';
 import Movies from './Movies';
 import db from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-
-
+import { useDispatch } from 'react-redux';
+import { setMovies } from '../features/movie/movieSlice';
 
 
 const Home = () => {
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const getData = async () => {      
-        await getDocs(collection(db, "movies")).then((movies) => {
-          let docData = movies.docs.map(movie => {
-            return {id: movie.id, ...movie.data()}
-          });
-          console.log(docData);
-        })
-    }
+        await fetch('https://my-json-server.typicode.com/horizon-code-academy/fake-movies-api/movies')
+          .then(response => response.json())
+          .then(json => {
+            let movieArray = [];
+            json.forEach(movie => {
+              movieArray.push(movie);
+            });
+            dispatch(setMovies(movieArray));
+          })
+        }
     getData();
   }, [])
 
