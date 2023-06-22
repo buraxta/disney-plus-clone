@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
+import { useParams } from "react-router-dom";
+import { selectMovies } from "../features/movie/movieSlice";
+import { useSelector } from "react-redux";
 
 const Detail = () => {
+  const { id } = useParams();
+  const [movie, setMovie] = useState();
+  const movieDB = useSelector(selectMovies);
+  
+  
+
+  useEffect(() => {
+    // Grab the movie info from DB
+    setMovie(movieDB.find(movie => movie.id === Number(id)))
+  }, [])
+  
+
   return (
     <Container>
+      {movie && (
+        <>
       <Background>
-        <img src="https://wallpaperaccess.com/full/288742.jpg" alt="" />
+        {<img src={`https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`} alt="" />}
       </Background>
       <ImageTitle>
-        <img src="/images/bao-logo.png" alt="" />
+        <h1>{movie.original_title}</h1>
       </ImageTitle>
       <Controls>
         <PlayButton>
@@ -26,12 +43,12 @@ const Detail = () => {
           <img src="/images/group-icon.png" />
         </GroupWatchButton>
       </Controls>
-      <SubTitle>2018 - 7m - Family, Fantasy, Kids, Animation</SubTitle>
+      <SubTitle>{movie.release_date.slice(0,4)} - Vote: {movie.vote_average} / {movie && movie.vote_count} </SubTitle>
       <Describtion>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur vel
-        autem quisquam ducimus, incidunt, provident iste, alias sapiente culpa
-        quam quas rem hic dolor nihil blanditiis aliquam et minus. Soluta.
+      {movie.overview}
       </Describtion>
+      </>
+      )}
     </Container>
   );
 };
@@ -66,12 +83,8 @@ margin-top: 60px;
   width: 35vw;
   min-height: 170px;
   min-width: 200px;
-
-  img {
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
-  }
+  font-size: 30px;
+  
 `;
 
 const Controls = styled.div`

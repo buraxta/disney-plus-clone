@@ -15,15 +15,37 @@ const Home = () => {
 
   useEffect(() => {
     const getData = async () => {      
-        await fetch('https://my-json-server.typicode.com/horizon-code-academy/fake-movies-api/movies')
-          .then(response => response.json())
-          .then(json => {
-            let movieArray = [];
-            json.forEach(movie => {
-              movieArray.push(movie);
-            });
-            dispatch(setMovies(movieArray));
-          })
+      const fetch = require('node-fetch');
+
+      const url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1';
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3YTlkMGFjMmI4NmI4ZDEyZjg1ODVmNzc2MDIxZWQwMyIsInN1YiI6IjY0OTJkZGJlNGJhNTIyMDBmZjAxNTgyMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hVtSLLde3kbTNwEdC20mjxOWcPefS6LFDLgH1I22IjU'
+        }
+      };
+      
+      fetch(url, options)
+        .then(res => res.json())
+        // .then(json => console.log(json.results))
+        .then(json => {
+          let movieArray = [];
+          json.results.forEach(movie => {
+            movieArray.push(movie);
+          });
+          dispatch(setMovies(movieArray));
+        })
+        .catch(err => console.error('error:' + err));  
+      // await fetch('https://dummyapi.online/api/blogposts')
+        //   .then(response => response.json())
+        //   .then(json => {
+        //     let movieArray = [];
+        //     json.forEach(movie => {
+        //       movieArray.push(movie);
+        //     });
+        //     dispatch(setMovies(movieArray));
+        //   })
         }
     getData();
   }, [])

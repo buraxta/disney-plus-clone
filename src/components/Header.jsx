@@ -1,38 +1,98 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { selectUserName, selectUserPhoto, setUserLogin, setSignOut } from '../features/user/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+// import { auth, provider } from '../firebase';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { provider } from '../firebase';
+import {useNavigate} from 'react-router-dom'
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userName = useSelector(selectUserName);
+  const userPhoto = useSelector(selectUserPhoto);
+  const auth = getAuth();
+
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        dispatch(setUserLogin({
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL
+        }))
+        navigate("/")
+      }
+    })
+  }, [])
+
+  const signIn = () => {
+    signInWithPopup(auth, provider)
+      .then( result => {
+        let user = result.user;
+        dispatch(setUserLogin({
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL
+        }))
+        navigate("/")
+      })
+  }
+
+  const signOut = () => {
+    auth.signOut()
+    .then(() => {
+      dispatch(setSignOut())
+      navigate("/login")
+    })
+  }
+
   return (
     <Nav>
+        <Link to={"/"}>
         <Logo src="/images/logo.svg" />
-        <NavMenu>
-          <a>
-            <img src="/images/home-icon.svg"/>
-            <span>HOME</span>
-          </a>
-          <a>
-            <img src="/images/search-icon.svg"/>
-            <span>SEARCH</span>
-          </a>
-          <a>
-            <img src="/images/watchlist-icon.svg"/>
-            <span>WATCHLIST</span>
-          </a>
-          <a>
-            <img src="/images/original-icon.svg"/>
-            <span>ORIGINALS</span>
-          </a>
-          <a>
-            <img src="/images/movie-icon.svg"/>
-            <span>MOVIES</span>
-          </a>
-          <a>
-            <img src="/images/series-icon.svg"/>
-            <span>SERIES</span>
-          </a>
-
-        </NavMenu>
-        <UserImg src="https://picsum.photos/200"/>
+        </Link>
+        {
+          !userName ?
+          <Logincontainer>
+          <Login onClick={signIn}>Login</Login>
+          </Logincontainer>:
+          
+          <>
+          <NavMenu>
+            <a>
+              <img src="/images/home-icon.svg"/>
+              <Link to={"/"}>
+              <span>HOME</span>
+              </Link>            
+            </a>
+            <a>
+              <img src="/images/search-icon.svg"/>
+              <span>SEARCH</span>
+            </a>
+            <a>
+              <img src="/images/watchlist-icon.svg"/>
+              <span>WATCHLIST</span>
+            </a>
+            <a>
+              <img src="/images/original-icon.svg"/>
+              <span>ORIGINALS</span>
+            </a>
+            <a>
+              <img src="/images/movie-icon.svg"/>
+              <span>MOVIES</span>
+            </a>
+            <a>
+              <img src="/images/series-icon.svg"/>
+              <span>SERIES</span>
+            </a>
+  
+          </NavMenu>
+          <UserImg onClick={signOut} src={userPhoto}/>
+          </>
+        }
 
     </Nav>
   ) 
@@ -64,6 +124,8 @@ const NavMenu = styled.div`
     align-items: center;
     padding: 0 12px;
     cursor: pointer;
+    color: white;
+    text-decoration: none;
 
     img {
       height: 20px;
@@ -104,4 +166,27 @@ const UserImg = styled.img`
   height: 48px;
   border-radius: 50%;
   cursor: pointer;
+`
+
+const Login = styled.div`
+  border: 1px solid #f9f9f9;
+  padding: 8px 16px;
+  border-radius: 4px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background-color: rgba(0,0,0,0.6);
+  transition: all 0.2s ease 0s;
+  cursor: pointer;
+
+  &:hover{
+    background-color: #f9f9f9;
+    color: #000;
+    border-color: transparent;
+  }
+`
+
+const Logincontainer = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 `

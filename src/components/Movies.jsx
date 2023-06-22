@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { selectMovies } from "../features/movie/movieSlice";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Movies = () => {
   const movies = useSelector(selectMovies);
@@ -11,9 +12,10 @@ const Movies = () => {
       <Content>
         {movies &&
           movies.map((movie) => (
-            movie.Poster &&
-            <Wrap key={movie.Title}>
-              <img src={movie.Poster} />
+            <Wrap key={movie.id}>
+              <Link to={`/detail/${movie.id}`} >
+                <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
+              </Link>
             </Wrap>
           ))}
       </Content>
@@ -34,6 +36,8 @@ const Content = styled.div`
 const Wrap = styled.div`
   border-radius: 10px;
   cursor: pointer;
+  width: 300px;
+  height: 350px;
   overflow: hidden;
   border: 3px solid rgba(249, 249, 249, 0.1);
   box-shadow: rgb(0 0 0 / 69%) 0px 26px 30px -10px,
